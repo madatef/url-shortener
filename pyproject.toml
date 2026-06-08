@@ -1,0 +1,16 @@
+[project]
+name = "url-shortener"
+version = "0.1.0"
+description = "This projects features rate limiting, logging with ELK stack, and async DB pooling. It's a practice project."
+readme = "README.md"
+requires-python = ">=3.13.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "fastapi>=0.136.3",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "sqlalchemy>=2.0.50",
+    "uvicorn>=0.49.0",
+    "watchfiles>=1.2.0",
+]
