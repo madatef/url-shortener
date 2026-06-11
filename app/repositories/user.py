@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.models.user import User
-from app.core.security import hash_password
 
 
 class UserRepo:
@@ -11,11 +10,11 @@ class UserRepo:
         *,
         session: AsyncSession, 
         username: str, 
-        password: str
+        hashed_password: str
     ) -> User:
         user = User(
             username=username,
-            hashed_password=hash_password(password),
+            hashed_password=hashed_password,
         )
 
         session.add(user)
