@@ -21,11 +21,12 @@ class UserRepo:
         try:
             await session.flush()
             await session.refresh(user)
+            return user
         except IntegrityError as e:
             await session.rollback()
             raise Exception(str(e))
     
-    async def get(session: AsyncSession, *, username: str) -> User | None:
+    async def get(*, session: AsyncSession, username: str) -> User:
         stmt = select(User).where(User.username == username)
         try:
             res = await session.execute(stmt)
