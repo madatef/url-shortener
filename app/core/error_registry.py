@@ -21,7 +21,7 @@ INVALID_CREDENTIALS = ErrorContract(
 )
 
 USER_EXISTS = ErrorContract(
-    code="email_exists",
+    code="user_exists",
     message="A user with this username already exists.",
     status_code=409,
 )
