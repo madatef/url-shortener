@@ -32,7 +32,7 @@ class Url(BaseModel):
         Index(
             'uq_user_key',
             'key',
-            'user',
+            'user_id',
             unique=True,
         ),
     )
