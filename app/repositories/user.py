@@ -6,6 +6,7 @@ from app.models.user import User
 
 
 class UserRepo:
+    @staticmethod
     async def create(
         *,
         session: AsyncSession, 
@@ -24,16 +25,14 @@ class UserRepo:
             return user
         except IntegrityError as e:
             await session.rollback()
-            raise Exception(str(e))
+            raise e
     
+    @staticmethod
     async def get(*, session: AsyncSession, username: str) -> User:
         stmt = select(User).where(User.username == username)
-        try:
-            res = await session.execute(stmt)
-            user = res.scalar_one_or_none()
-            return user
-        except IntegrityError as e:
-            raise Exception(str(e))
+        res = await session.execute(stmt)
+        user = res.scalar_one_or_none()
+        return user
 
 
 # Global Singleton
