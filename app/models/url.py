@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, Index, String, UUID
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -8,6 +8,8 @@ from app.models.base import BaseModel
 class Url(BaseModel):
     __tablename__ = 'urls'
 
+    # Globally unique: the redirect route resolves a short code with no
+    # user context, so a key must map to exactly one destination.
     key: Mapped[str] = mapped_column(
         String,
         unique=True,
@@ -15,9 +17,10 @@ class Url(BaseModel):
         index=True,
     )
 
+    # Not unique: two users may shorten the same destination, and one user
+    # may want several codes for it. Indexed for lookups.
     value: Mapped[str] = mapped_column(
         String,
-        unique=True,
         index=True,
         nullable=False,
     )
@@ -26,15 +29,6 @@ class Url(BaseModel):
         ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
-    )
-
-    __table_args__ = (
-        Index(
-            'uq_user_key',
-            'key',
-            'user_id',
-            unique=True,
-        ),
     )
 
     user = relationship('User', back_populates='urls')
