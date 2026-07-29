@@ -3,6 +3,8 @@ from datetime import timedelta, timezone, datetime
 from jose import jwt, JWTError
 
 from app.config import settings
+from app.core.error_registry import INVALID_TOKEN
+from app.core.errors import AppError
 
 
 def _now() -> datetime:
@@ -38,21 +40,20 @@ def create_access_token(
 def decode_access_token(token: str) -> str:
     """
     Validate and decode JWT access token
-    Returns: 
+    Returns:
         the subject of the token (user ID in our case)
     """
     try:
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
-            settings.ALGORITHM,
+            algorithms=[settings.ALGORITHM],
         )
-    except JWTError as e:
-        print(f'Failed to decode token: {str(e)}')
-        raise Exception(str(e))
+    except JWTError:
+        raise AppError(INVALID_TOKEN)
 
-    subject = payload.get("subject")
+    subject = payload.get("sub")
     if subject is None:
-        raise Exception("Invalid token")
+        raise AppError(INVALID_TOKEN)
 
     return subject

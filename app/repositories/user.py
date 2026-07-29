@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -28,8 +30,15 @@ class UserRepo:
             raise e
     
     @staticmethod
-    async def get(*, session: AsyncSession, username: str) -> User:
+    async def get(*, session: AsyncSession, username: str) -> User | None:
         stmt = select(User).where(User.username == username)
+        res = await session.execute(stmt)
+        user = res.scalar_one_or_none()
+        return user
+
+    @staticmethod
+    async def get_by_id(*, session: AsyncSession, user_id: uuid.UUID) -> User | None:
+        stmt = select(User).where(User.id == user_id)
         res = await session.execute(stmt)
         user = res.scalar_one_or_none()
         return user
