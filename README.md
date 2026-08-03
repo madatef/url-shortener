@@ -1,15 +1,30 @@
 # URL Shortener
 
-A modern, asynchronous URL shortening service built with Python FastAPI. This project features user authentication, rate limiting, and a robust backend architecture.
+A modern, asynchronous URL shortening service built with Python FastAPI. This
+project features user authentication and a robust backend architecture.
+
+> **Status**: a practice project, under active development. The sections below
+> mark anything not yet built as **Planned**. Nothing marked Planned exists in
+> the code — it is intent, not documentation.
 
 ## Features
 
+### Implemented
+
 - **URL Shortening**: Create short aliases for long URLs
 - **User Authentication**: Secure signup and login with JWT tokens
-- **Rate Limiting**: Prevent abuse with configurable rate limits
-- **Asynchronous Database**: High-performance async database operations
-- **Logging**: Comprehensive logging with ELK stack integration
+- **Asynchronous Database**: High-performance async database operations with
+  connection pooling
 - **Security**: Password hashing with bcrypt, JWT authentication
+
+### Planned
+
+- **Rate Limiting**: Prevent abuse with configurable rate limits — *not
+  implemented; no limiter or dependency is wired up*
+- **Logging**: Comprehensive logging with ELK stack integration — *not
+  implemented; the app does no application-level logging beyond uvicorn's
+  access log*
+- **Automated Tests**: *no test suite or test dependencies exist yet*
 
 ## Tech Stack
 
@@ -141,7 +156,7 @@ exist.
 
 ### Prerequisites
 
-- Python 3.13+
+- Python 3.13.12+ (as pinned by `requires-python` in `pyproject.toml`)
 - PostgreSQL database
 - Virtual environment (recommended)
 
@@ -153,10 +168,12 @@ exist.
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-2. Install development dependencies:
+2. Install dependencies:
    ```bash
-   pip install -e ".[dev]"  # If you add dev dependencies to pyproject.toml
+   pip install -e .
    ```
+   There is no `[dev]` extra — no development or test dependencies are declared
+   in `pyproject.toml` yet.
 
 3. Run in development mode:
    ```bash
@@ -167,7 +184,8 @@ exist.
 
 - Follow PEP 8 style guide
 - Use type hints for all function signatures
-- Write unit tests for new functionality
+- Write unit tests for new functionality — aspirational for now; there is no
+  test suite, runner, or fixtures in the repo to add tests to
 
 ## Configuration
 
@@ -180,7 +198,13 @@ The application can be configured using environment variables in a `.env` file:
 | DB_USER | Database user | postgres |
 | DB_PASSWORD | Database password | (required) |
 | SECRET_KEY | JWT secret key | (required) |
-| ALGORITHM | JWT algorithm | HS256 |
+| ALGORITHM | JWT algorithm | (required) |
+
+`DB_PASSWORD`, `SECRET_KEY` and `ALGORITHM` have no defaults in `config.py` —
+omitting any of them fails at startup. See `.env.example`, which sets
+`ALGORITHM=HS256`. There is no `DB_NAME` setting; the connection URL in
+`db/session.py` specifies no database, so Postgres falls back to the default for
+the user.
 
 ## Security
 
@@ -199,9 +223,11 @@ Passwords must meet the following requirements:
 - Tokens expire after 15 minutes
 - Passwords are hashed using bcrypt
 
-## Logging
+## Logging (Planned)
 
-The application features comprehensive logging with ELK stack integration for monitoring and debugging.
+Comprehensive logging with ELK stack integration is intended for monitoring and
+debugging, but **is not implemented**. Today the only output is uvicorn's access
+log, enabled in `main.py`.
 
 ## Contributing
 
@@ -213,7 +239,8 @@ The application features comprehensive logging with ELK stack integration for mo
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Intended to be MIT licensed. **No LICENSE file has been added to the repository
+yet**, so no license currently applies.
 
 ## Acknowledgments
 
