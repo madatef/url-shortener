@@ -1,7 +1,7 @@
 [project]
 name = "url-shortener"
 version = "0.1.0"
-description = "This projects features rate limiting, logging with ELK stack, and async DB pooling. It's a practice project."
+description = "A practice URL shortener with JWT auth and async DB pooling. Rate limiting and ELK logging are planned."
 readme = "README.md"
 requires-python = ">=3.13.12"
 dependencies = [
