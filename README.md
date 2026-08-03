@@ -48,12 +48,19 @@ url-shortener/
 - `POST /api/v0/auth/signup` - Create a new user account
 - `POST /api/v0/auth/login` - Authenticate and receive access token
 
-### URL Management (Planned)
+### URL Management
+
+All except the redirect require authentication via the `access_token` cookie.
 
 - `POST /api/v0/urls` - Create a new short URL
-- `GET /api/v0/urls/{short_code}` - Redirect to original URL
+- `GET /api/v0/urls/{short_code}` - Redirect to original URL (public — no auth,
+  so shared links work for everyone)
 - `GET /api/v0/urls` - List user's URLs
-- `DELETE /api/v0/urls/{short_code}` - Delete a short URL
+- `DELETE /api/v0/urls/{short_code}` - Delete a short URL (owner only)
+
+Short codes are 7 random base62 characters. A code you don't own is reported as
+`url_not_found` rather than `403`, so the API can't be used to probe which codes
+exist.
 
 ## Installation
 
@@ -101,7 +108,33 @@ url-shortener/
    ```bash
    curl -X POST "http://localhost:5000/api/v0/auth/login" \
      -H "Content-Type: application/json" \
+     -c cookies.txt \
      -d '{"username": "testuser", "password": "Test123!@#"}'
+   ```
+
+### Shortening a URL
+
+1. **Create a short URL** (using the cookie saved above):
+   ```bash
+   curl -X POST "http://localhost:5000/api/v0/urls" \
+     -H "Content-Type: application/json" \
+     -b cookies.txt \
+     -d '{"value": "https://example.com/some/very/long/path"}'
+   ```
+
+2. **Follow it** — no cookie needed:
+   ```bash
+   curl -i "http://localhost:5000/api/v0/urls/<short_code>"
+   ```
+
+3. **List your URLs**:
+   ```bash
+   curl -b cookies.txt "http://localhost:5000/api/v0/urls"
+   ```
+
+4. **Delete one**:
+   ```bash
+   curl -X DELETE -b cookies.txt "http://localhost:5000/api/v0/urls/<short_code>"
    ```
 
 ## Development
