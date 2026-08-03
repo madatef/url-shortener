@@ -37,3 +37,20 @@ USER_NOT_FOUND = ErrorContract(
     message="User doesn't exist.",
     status_code=404,
 )
+
+
+# -----------------
+# Url domain errors
+# -----------------
+
+URL_NOT_FOUND = ErrorContract(
+    code="url_not_found",
+    message="Short URL doesn't exist.",
+    status_code=404,
+)
+
+KEY_GENERATION_FAILED = ErrorContract(
+    code="key_generation_failed",
+    message="Could not allocate a short code. Please retry.",
+    status_code=503,
+)
