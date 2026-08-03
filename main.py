@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v0.auth import router as auth_router
+from app.api.v0.urls import router as urls_router
 from app.core.errors import AppError
 
 
@@ -36,6 +37,7 @@ async def health_check():
     return {"status": "ok"}
 
 app.include_router(auth_router, prefix="/api/v0")
+app.include_router(urls_router, prefix="/api/v0")
 
 if __name__ == "__main__":
     import uvicorn
