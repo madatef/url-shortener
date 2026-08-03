@@ -27,22 +27,23 @@ async def create_user(
             username=username,
             hashed_password=hashed_password,
         )
-
-        token, expiry = create_access_token(subject=str(user.id))
-        token = {
-            'access_token': token,
-            'expiry': expiry,
-        }
-
-        return user, token
-    # safety net for race conditions
+    # safety net for race conditions; user_repo.create has already rolled
+    # back by this point
     except IntegrityError:
         raise AppError(USER_EXISTS)
-    except Exception as e:
+    except Exception:
         await session.rollback()
-        raise e
-    finally:
-        await session.commit()
+        raise
+
+    await session.commit()
+
+    token, expiry = create_access_token(subject=str(user.id))
+    token = {
+        'access_token': token,
+        'expiry': expiry,
+    }
+
+    return user, token
 
 
 async def login(
